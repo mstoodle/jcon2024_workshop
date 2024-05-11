@@ -1,6 +1,6 @@
 FROM icr.io/appcafe/ibm-semeru-runtimes:open-17-jdk-ubi AS semeru
 
-FROM redhat/ubi9
+FROM docker.io/redhat/ubi9
 
 EXPOSE 3000:3000
 EXPOSE 9080:9080

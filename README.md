@@ -34,14 +34,14 @@ technologies can be used to accelerate startup and reduce memory usage.
 
 To start, you will need to build the main container using the following command:
 
-$ podman build --network=host -f Dockerfile.main -t workshop/main .
+$ podman build --network=host -f main.Dockerfile -t workshop/main .
 
 It may take a while to build on your computer, but once this container is built
 you should have everything you need to go through the workshop.
 
 Start the container and do all your work inside that container:
 
-$ podman run --network=host --privileged workshop/main --name=workshop/main /bin/bash
+$ podman run --network=host --privileged worksho /etcp/main --name=workshop/main /bin/bash
 
 Once you have the container up and running, the usual progression is to start with
 $ cd /Workshop_SharedCache
