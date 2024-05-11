@@ -40,6 +40,10 @@ to it before proceeding with the workshop:
 Please be careful in the rest of this workshop because you will be running
 as root with super powers.
 
+If you're running on Windows, then the "podman stats" command may  not work
+for you. I don't know if it affects all Windows versions, but I was unable
+to get it to work on Windows 10.
+
 To create the main workshop container, you will need to build the main container
 using the following command:
 
