@@ -32,7 +32,16 @@ segments (WorkshopSharedCache, WorkshopInstantOn, and WorkshopCloudCompiler)
 that take attendees through a sequence of experiments that showcase how these
 technologies can be used to accelerate startup and reduce memory usage.
 
-To start, you will need to build the main container using the following command:
+Although not recommended as common practice, this workshop needs to run as
+root so that its containers within containers can work without issues. If
+you are not running as the root user on your system, you'll want to switch
+to it before proceeding with the workshop:
+	sudo /bin/bash
+Please be careful in the rest of this workshop because you will be running
+as root with super powers.
+
+To create the main workshop container, you will need to build the main container
+using the following command:
 
 $ podman build --network=host -f main.Dockerfile -t workshop/main .
 
@@ -66,6 +75,9 @@ $ cat README.md
 ...
 
 That's it! Good luck!
+
+When you're done, if you logged in as root you'll want to logout before you move on
+to other things! Or just close the terminal window you've been working in.
 
 
 NOTE: all the documentation for this workshop assumes you are using "podman" to
