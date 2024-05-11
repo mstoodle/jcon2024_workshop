@@ -50,7 +50,7 @@ you should have everything you need to go through the workshop.
 
 Start the container and do all your work inside that container:
 
-$ podman run --network=host --privileged --name=workshop/main --replace -it workshop/main /bin/bash
+$ podman run --network=host --privileged --cgroup-manager=cgroupfs --name=workshop/main --replace -it workshop/main /bin/bash
 
 Once you have the container up and running, the usual progression is to start with
 $ cd /Workshop_SharedCache
