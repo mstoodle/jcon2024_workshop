@@ -1,1 +1,1 @@
-podman run --network=host --privileged --cgroup-manager=cgroupfs --name=workshop-main --replace -it workshop/main /bin/bash
+podman run --network=host --privileged --name=workshop-main --replace -it workshop/main /bin/bash
