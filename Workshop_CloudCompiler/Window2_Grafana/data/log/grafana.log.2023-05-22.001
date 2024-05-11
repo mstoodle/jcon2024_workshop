@@ -1,0 +1,29 @@
+logger=licensing t=2023-05-07T00:07:47.95-0400 lvl=info msg="Validated license token" appURL=http://localhost:3000/ source=disk status=NotFound
+logger=licensing.renewal t=2023-05-07T00:07:47.96-0400 lvl=warn msg="failed to load or validate token" err="license token file not found: /team/mpirvu/EclipseConDemo/grafana-8.4.6/data/license.jwt"
+logger=licensing t=2023-05-07T01:07:47.95-0400 lvl=info msg="Validated license token" appURL=http://localhost:3000/ source=disk status=NotFound
+logger=licensing.renewal t=2023-05-07T01:07:47.95-0400 lvl=warn msg="failed to load or validate token" err="license token file not found: /team/mpirvu/EclipseConDemo/grafana-8.4.6/data/license.jwt"
+logger=licensing t=2023-05-07T02:07:47.95-0400 lvl=info msg="Validated license token" appURL=http://localhost:3000/ source=disk status=NotFound
+logger=licensing.renewal t=2023-05-07T02:07:47.95-0400 lvl=warn msg="failed to load or validate token" err="license token file not found: /team/mpirvu/EclipseConDemo/grafana-8.4.6/data/license.jwt"
+logger=settings t=2023-05-21T23:53:00.36-0400 lvl=info msg="Starting Grafana" version=8.4.6 commit=c53173ff6 branch=HEAD compiled=2022-04-04T05:37:02-04:00
+logger=settings t=2023-05-21T23:53:00.36-0400 lvl=warn msg="falling back to legacy setting of 'min_interval_seconds'; please use the configuration option in the `unified_alerting` section if Grafana 8 alerts are enabled."
+logger=settings t=2023-05-21T23:53:00.36-0400 lvl=info msg="Config loaded from" file=/team/mpirvu/EclipseConDemo/grafana-8.4.6/conf/defaults.ini
+logger=settings t=2023-05-21T23:53:00.36-0400 lvl=info msg="Path Home" path=/team/mpirvu/EclipseConDemo/grafana-8.4.6
+logger=settings t=2023-05-21T23:53:00.36-0400 lvl=info msg="Path Data" path=/team/mpirvu/EclipseConDemo/grafana-8.4.6/data
+logger=settings t=2023-05-21T23:53:00.36-0400 lvl=info msg="Path Logs" path=/team/mpirvu/EclipseConDemo/grafana-8.4.6/data/log
+logger=settings t=2023-05-21T23:53:00.36-0400 lvl=info msg="Path Plugins" path=/team/mpirvu/EclipseConDemo/grafana-8.4.6/data/plugins
+logger=settings t=2023-05-21T23:53:00.36-0400 lvl=info msg="Path Provisioning" path=/team/mpirvu/EclipseConDemo/grafana-8.4.6/conf/provisioning
+logger=settings t=2023-05-21T23:53:00.36-0400 lvl=info msg="App mode production"
+logger=sqlstore t=2023-05-21T23:53:00.36-0400 lvl=info msg="Connecting to DB" dbtype=sqlite3
+logger=sqlstore t=2023-05-21T23:53:00.36-0400 lvl=warn msg="SQLite database file has broader permissions than it should" path=/team/mpirvu/EclipseConDemo/grafana-8.4.6/data/grafana.db mode=-rwxrwxrwx expected=-rw-r-----
+logger=migrator t=2023-05-21T23:53:00.39-0400 lvl=info msg="Starting DB migrations"
+logger=migrator t=2023-05-21T23:53:00.4-0400 lvl=info msg="migrations completed" performed=0 skipped=448 duration=578.444µs
+logger=licensing t=2023-05-21T23:53:00.4-0400 lvl=info msg="Validated license token" appURL=http://localhost:3000/ source=disk status=NotFound
+logger=plugin.manager t=2023-05-21T23:53:00.71-0400 lvl=info msg="Plugin registered" pluginId=input
+logger=plugin.finder t=2023-05-21T23:53:00.71-0400 lvl=warn msg="Skipping finding plugins as directory does not exist" path=/team/mpirvu/EclipseConDemo/grafana-8.4.6/data/plugins
+logger=query_data t=2023-05-21T23:53:00.72-0400 lvl=info msg="Query Service initialization"
+logger=live.push_http t=2023-05-21T23:53:00.73-0400 lvl=info msg="Live Push Gateway initialization"
+logger=report t=2023-05-21T23:53:00.82-0400 lvl=warn msg="Scheduling and sending of reports disabled, SMTP is not configured and enabled. Configure SMTP to enable."
+logger=http.server t=2023-05-21T23:53:00.83-0400 lvl=info msg="HTTP Server Listen" address=[::]:3000 protocol=http subUrl= socket=
+logger=http.server t=2023-05-21T23:54:47.82-0400 lvl=info msg="Successful Login" User=admin@localhost
+logger=context t=2023-05-21T23:54:50.37-0400 lvl=info msg="Request Completed" method=GET path=/api/live/ws status=0 remote_addr=9.67.161.25 time_ms=4 size=0 referer=
+logger=live t=2023-05-21T23:54:52.25-0400 lvl=info msg="Initialized channel handler" channel=grafana/dashboard/uid/b4kP_KoMzasadasd address=grafana/dashboard/uid/b4kP_KoMzasadasd

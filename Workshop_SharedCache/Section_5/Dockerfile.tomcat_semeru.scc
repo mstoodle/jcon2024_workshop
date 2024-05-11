@@ -1,0 +1,16 @@
+FROM icr.io/appcafe/ibm-semeru-runtimes:open-17-jdk-ubi AS semeru
+
+FROM tomcat:10.1.23-jdk17-temurin-jammy
+
+ARG VERSION=1.0
+ARG REVISION=SNAPSHOT
+
+# install semeru runtimes and set as default
+COPY --from=semeru /opt/java /opt/java
+ENV JAVA_HOME=/opt/java/openjdk
+ENV PATH=/opt/java/openjdk/bin:$PATH
+
+ADD sample.war /usr/local/tomcat/webapps
+ADD catalina.sh /usr/local/tomcat/bin/catalina.sh
+
+ENV OPENJ9_JAVA_OPTIONS="-Xshareclasses:verbose"

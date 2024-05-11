@@ -1,0 +1,9 @@
+FROM tomcat:10.1.23-jdk17-temurin-jammy
+
+ARG VERSION=1.0
+ARG REVISION=SNAPSHOT
+
+ADD sample.war /usr/local/tomcat/webapps/sample.war
+ADD catalina.sh /usr/local/tomcat/bin/catalina.sh
+
+ENTRYPOINT ["/bin/bash", "-c", "time catalina.sh run"]
