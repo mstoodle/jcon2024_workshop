@@ -22,7 +22,7 @@ shared classes cache when this container is built. Run the following command:
 loaded getting started application. Run the following commadn and wait for the server
 to start:
 
-	$ podman run --network=host --name=liberty_noscc --replace -it liberty_noscc
+	$ podman run -p 9080:9080 --name=liberty_noscc --replace -it liberty_noscc
 
 Look for the elapsed time to start the server. You'll see a line that ends with something like::
 	The defaultServer server started in 3.043 seconds.

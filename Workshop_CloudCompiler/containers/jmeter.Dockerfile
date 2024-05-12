@@ -7,8 +7,9 @@ FROM docker.io/eclipse-temurin:17
 ENV JMETER_VERSION 5.4.3 
 
 # Install pre-requisite packages
-RUN apt-get update && apt-get install -y --no-install-recommends wget unzip \
-       && rm -rf /var/lib/apt/lists/*
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends wget unzip \
+ && rm -rf /var/lib/apt/lists/*
 
 # Install jmeter 
 RUN mkdir /jmeter \
