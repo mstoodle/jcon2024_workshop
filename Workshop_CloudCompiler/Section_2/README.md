@@ -40,7 +40,7 @@ we'll call, you guessed it, "Window4").
 
 In Window4, you will only run one command to monitor the containers
 started in this workshop. Run the command:
-	$ podman stats
+[Window4]	$ podman stats
 
 This command will update every few seconds with details of all the
 containers running in the other windows, showing the %CPU and
@@ -50,7 +50,7 @@ memory usage.
 
 Switching focus to Window1, you will first start the mongo container
 by running
-	$ ./step1_start.mongo.sh
+[Window1]	$ ./step1_start.mongo.sh
 
 This command ensure the mongo database container is running and
 refreshes the database content to a known fresh state (for
@@ -63,7 +63,7 @@ up and running. Eclipse OpenJ9 calls this a "JIT server" so we've
 called our container "jitserver" too. Start this container with
 the following command in Window1:
 
-	$ ./step2_start.jitserver.sh
+[Window1]	$ ./step2_start.jitserver.sh
 
 The jitserver starts almost immediately and is ready to go. You'll
 notice that, although the jitserver can run as a daemon container,
@@ -90,7 +90,7 @@ start this container, let's take a quick look at how that works.
 All the magic is contained in the step3_start.acmeair.sh script,
 which is small enough that you can just cat the file:
 
-	$ cat step3_start.acmeair.sh
+[Window2]	$ cat step3_start.acmeair.sh
 
 You'll see that this container sets up a couple of environment
 variables like JITSERVER_HOST and JITSERVER_OPTS . Otherwise
@@ -122,7 +122,7 @@ be allowed to run with 1 CPU core and to use 400MB of memory.
 
 Start the AcmeAir container now:
 
-	$ ./step3_start.acmeair.sh
+[Window2]	$ ./step3_start.acmeair.sh
 
 This starts the acmeair_jitserver container. If you look at
 Window1 after starting this container, you'll see a message
@@ -137,7 +137,7 @@ initialize the OpenLiberty and the AcmeAir application.
 
 6. Stop the jitserver (!)
 
-We're going to hopefully demonstrate the resilience of the
+We're going to demonstrate the resilience of the
 Semeru Cloud Compiler now. Hit Control-C in Window1 to
 stop the jitserver container. It should stop almost
 immediately. Notice, however, that the AcmeAir application
@@ -149,7 +149,7 @@ is run so we get a better visual impression that the
 jitserver is doing work. In Window1, take a quick
 peek at step4_start.jitserver_verbose.sh :
 
-	$ cat step4_start.jitserver_verbose.sh
+[Window1]	$ cat step4_start.jitserver_verbose.sh
 
 If you compare this file to what you saw earlier, there
 is only one difference. Rather than running just the
@@ -166,14 +166,14 @@ example.
 So we're expecting to see JIT compilations happening
 in the jitserver once a client connects to it. Start the
 container by running the script:
-	$ ./step5_start.jitserver_verbose.sh
+[Window1]	$ ./step5_start.jitserver_verbose.sh
 
 Not much may happen right away, but eventually the AcmeAir
 container will notice that the cloud compiler is live again
 and it will connect and perform compiles there. If you don't
 see anything, don't worry about it. In the next step we're
 going to drive load against AcmeAir which will force more
-compilations to happen.
+compilations to happen and that will be quite obvious!
 
 7. In Window3, drive load to AcmeAir
 
@@ -186,9 +186,8 @@ have the focus. The output on Window2 won't be too
 interesting, so you don't have to worry about keeping
 it visible unless you want to. 
 
-Let's start the load! Run the following command in
-Window4:
-	$ ./step5_start.jmeter.sh
+Let's start the load! Run the following command:
+[Window3]	$ ./step5_start.jmeter.sh
 
 You should immediately see compilations start to fly
 by in Window1 at the jitserver.  The view in Window3 will
@@ -246,27 +245,30 @@ let's take a look at what's changed from step3:
 	> podman run --replace --network=host -e JVM_ARGS="$ACMEAIR_OPTS"   -m=200m --cpus=1 -v $PWD/mongo.properties:/config/mongo.properties --name acmeair_jitserver_400mb $ACMEAIR_IMAGE
 
 The only difference there is the memory limit: in the step6 script,
-we're reducing the memory limit for AcmeAir to only 200mb. Given
-this application is a signficant JakartaEE application, it will be
-pretty impressive to run that effectively in a container with
-only 1 CPU core and 200mb of memory. Let's see how it does!
+we're reducing the memory limit for AcmeAir to only 200mb. That's even
+smaller than the memory (225mb) where the AcmeAir server was unable to
+function effectively in Section_1 of this workshop! Given this application
+is a signficant JakartaEE application, it will be pretty impressive to run
+it effectively in a container with only 1 CPU core and 200mb of memory.
+Let's see how it does!
 
 From Window2, start the lower memory server:
 
-	$ ./step6_start.acmeair.200mb.sh
+[Window2]	$ ./step6_start.acmeair.200mb.sh
 
 Then you can jump back to Window3 and restart the exact same jmeter
 script we used earlier:
 
-	$ ./step5_start.jmeter.sh
-(if you really want to be a good performance engineer, you could start
-back from the beginning by restarting the mongo and jitserver containers
-running in Window1, but for this exercise we'll just leave them as-is).
+[Window3]	$ ./step5_start.jmeter.sh
+(if you really want to be a rigourous and careful performance engineer, you
+could start back from the beginning by restarting the mongo and jitserver
+containers running in Window1, but for this exercise we can just leave them
+running as-is).
 
 Once you start the jmeter load driver, you'll see the performance
 rampup and you should see the instantaneous throughput reach
 basically the same level as we saw earlier when AcmeAir was
-able to use 400mb.
+able to use 400mb.  Amazing!
 
 You won't always be able to cut the size of the container in half
 (and you may be wondering where 400mb came from originally...it's
@@ -274,86 +276,37 @@ basically the memory that a HotSpot based JDK will need in order
 to reach similer throughput levels), but reducing container memory
 requirements means more containers will fit on a single machine
 instance. And those savings add up in Kubernetes (OpenShift)
-deployments where you'll see more pods able to fit onto a node,
-or that fewer nodes will be needed to run a large number of pods.
+deployments where you'll see more pods able to fit onto an existing
+node, and that fewer nodes will be needed to run a large number of pods.
+
+Bonus experiments
+
+In the containers directly, you'll see that multiple AcmeAir server
+containers were created to listen on different ports. Try to set up
+multiple AcmeAir containers to run in parallel (you'll also have to
+start multiple jmeter containers to drive load at the different
+AcmeAir servers). You can connect those servers to the same jitserver
+instance and see whether how much aggregate load you can process with
+the overall 400mb memory limit (i.e. if you have two containers that
+each have 1cpu and are limited to 200mb of memory, your total memory
+requirement is 400m). You should be able to handle substantially more
+laod with two small containers than you can with one large one. How
+does it compare if you give the large one 2 CPU cores? How expensive
+do you think it will be to deploy many smaller containers on a small
+VM than larger containers? Which approach is more cost effective to
+handle a given level of incoming load? Alternatively, what's the
+highest load you can achieve with smaller containers versus one
+large container for a given VM?
 
 9. That's it!
 
-You've reached the end of the workshop! Well done!
+In this section, you saw how using a separately (but easily!) configured
+JIT server (the Semeru Cloud Compiler) effectively offloads both
+CPU and memory requirements of the JIT compiler so that your servers
+only have to process the transactions that run your business. You
+saw how using a JIT server enable the server process (which can be any
+microservice) to run in much less memory, which could save deployment
+costs by running more services on a single VM instance or by using
+smaller, less expensive, VM instances.
 
-
-
-
-3. Watch the JIT compiler go!
-
-Since there's no log file specified (you would see ,vlog=<filename>)
-in this option, the output is generated to the terminal window.
-You don't need to understand all this output for this workshop, but
-know that the majority of the output produced is a line of text
-describing each new method that is compiled by the JIT compiler
-while running the application. After a while, things will slow
-down and, if you wait long enough, it will probably mostly stop.
-If you can find acmeair_baseline in the stats output of Window3,
-its %CPU will drop to low single digits once the server finalizes
-the JIT compiles. Try to wait for the compilation output to settle
-down, but if you are impatient, you can start driving the load
-once the server is started, which should only take a few seconds.
-
-4. Start the load
-
-The next step of this section will be in Window2, so switch your
-focus over there now. Now we're going to start driving load to
-the AcmeAir application to see the effect. I suggest arranging
-your windows so that you can see some of the lines of Window1
-underneath Window2, and so that you can see the podman stats
-output in Window3. Window 2 will be in the foreground. Once 
-you have the windows arranged as you like, run this command:
-
-	$ ./step3_start.jmeter.sh
-
-This container also does not run as a daemon and so will produce
-output. Every few seconds, it will display two lines: 1) the first
-line shows measurements for the transactions it has initiated
-since the last output was generated, and 2) the second line
-shows the aggregated performance measurements since the beginning
-of the run. This output looks slightly confusing because it
-looks like very high throughput occurs but then a much lower
-number comes out. The first number can be thought of as the
-instantaneous performance experienced by transactions that
-are arriving "now" whereas the second one reflects the overall
-performance of the server since load was first applied. You
-should see the instantaneous throughput number improving over
-time. Once you see the number starting to level off (which
-will probably take a few minutes), the server will be fully
-warmed up and you may see the JIT compiler output in Window1
-start to slow down. While the server is ramping up, you may
-also want to periodically watch Window3 to see if you can
-see the high memory use that periodically happens as the JIT
-is compiling big methods. This server only has a single core,
-so it takes a while to ramp up and also the transactions have
-to share that single core with all the CPU demands of the
-JIT compiler.
-
-5. Stop the containers
-
-When you have gotten your fill of watching the activity of
-this server, you can stop it by pressing Control-C in
-Window1, which should stop the acmeair_baseline container.
-That may also stop the jmeter container in Window2, but if
-it doesn't, you can run this command to eventually stop it:
-
-	$ podman stop jmeter1
-
-You can stop the mongo container too at this point, if you
-would like:
-
-	$ podman stop mongodb
-
-Bonus: Create a second acmeair container and a second jmeter
-container that can run at the same time as the ones described
-in this section. You'll see that both acmeair containers
-perform tremendous amounts of JIT compilation.
-
-That's it for the first section!  In the next section, we'll
-be looking at how to add the Semeru Cloud Compiler into the
-mix.
+You've now reached the end of the workshop! Well done!

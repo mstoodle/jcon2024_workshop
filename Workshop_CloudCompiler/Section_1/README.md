@@ -65,13 +65,19 @@ come out in the window (and there will be a lot of it!).
 
 [Window1]	$ ./step2_start.acmeair.sh
 
-This starts a container called acmeair_baseline. It doesn't start
-the server as a daemon so that you can see the output along with
-the server startup time:
+This starts a container called acmeair_baseline_400m with, you guessed it
+a container memory limit of 400MB and one CPU core. It doesn't start the server
+as a daemon so that you can see the output along with the server startup time:
+
+	The defaultServer server started in 3.214 seconds.
 
 Once the server has started, take a look at Window3 at the
-podman stats and you'll see that this server uses about 100MB of
-memory:
+podman stats and you'll see that this server uses about 80MB of
+memory after starting :
+
+ID            NAME                   CPU %       MEM USAGE / LIMIT  MEM %       NET IO      BLOCK IO           PIDS        CPU TIME     AVG CPU %
+423dc558c688  acmeair_baseline_400m  4.23%       79.6MB / 419.4MB   18.98%      0B / 0B     8.192kB / 0B       47          5.836339s    12.82%
+
 
 
 3. Start the load
@@ -91,29 +97,28 @@ of the run. This output looks slightly confusing because it
 looks like very high throughput occurs but then a much lower
 number comes out. The first number can be thought of as the
 instantaneous performance experienced by transactions that
-are arriving "now" whereas the second one reflects the overall
-performance of the server since load was first applied. You
-should see the instantaneous throughput number improving over
-time. Once you see the number starting to level off (which
-will probably take a few minutes), the server will be fully
-warmed up and you may see the JIT compiler output in Window1
-start to slow down. While the server is ramping up, you may
+are arriving "in the moment" whereas the second one reflects
+the overall performance of the server since load was first
+applied. You should see the instantaneous throughput number
+improving over time. Once you see the number starting to level
+off (which will probably takes about a minute), the server will
+be fully warmed up.  While the server is ramping up, you may
 also want to periodically watch Window3 to see if you can
 see the high memory use that periodically happens as the JIT
-is compiling big methods. This server only has a single core,
-so it takes a while to ramp up and also the transactions have
-to share that single core with all the CPU demands of the
-JIT compiler.
+is compiling big methods. This server is only allowed to use a
+single CPU core, so it takes a while to ramp up and also the
+transactions have to share that single core and the memory with
+all the CPU and memory demands of the JIT compiler.
 
 5. Stop the containers
 
 When you have gotten your fill of watching the activity of
 this server, you can stop it by pressing Control-C in
-Window1, which should stop the acmeair_baseline container.
-That may also stop the jmeter container in Window2, but if
+Window1, which should stop the acmeair_baseline_400m container.
+That should also stop the jmeter container in Window2, but if
 it doesn't, you can run this command to eventually stop it:
 
-[Window2]	$ podman stop jmeter
+[Window1]	$ podman stop jmeter
 
 6. Let's try that again...
 
@@ -124,12 +129,12 @@ compiler are not compromised. The server ramps up smoothly
 and reaches the peak performance it is capable of.
 
 Let's try it one more time but with a lower memory limit:
-this time we're going to run in just 200MB to see how it
+this time we're going to run in just 225MB to see how it
 does.
 
 Repeat the earlier steps to start the smaller container:
 
-[Window1]	$ ./step4_start.acmeair200.sh
+[Window1]	$ ./step4_start.acmeair225.sh
 
 This container will start in about the same time as the
 earlier server, and it will use about the same amount
@@ -142,21 +147,25 @@ just like we did before in Window2:
 
 Here you should observe a very big difference. Not only
 will the server ramp up much more slowly than before,
-but you may even see the server crash because all the 
-memory available to the container is consumed.
+you may even see the server crash because all the 
+memory available to the container is consumed and we
+haven't configured any swap space.
 
+If the server doesn't crash, you should see that the
+overall performance is lower and it takes longer to
+get to the peak performance. In fact, you may see the
+performance drop markedly as the JIT compiler workload
+dominates the ability of the server to process
+transactions.
+
+Whenever you want to stop, you can hit Control-C in Window1
+and that should stop both the AcmeAir server as well as the
+jmeter container.
 
 You can stop the mongo container too at this point, if you
 would like:
 
 	$ podman stop mongodb
-
-
-Bonus task: Create a second acmeair container and a second jmeter
-container (back in the ../containers directory) that can run at
-the same time as the ones described in this section.  To do that,
-you'll need to change the ports used by each server, which will
-involve changing the server.xml file to use a different http port.
 
 That's it for the first section!  In the next section, we'll
 be looking at how to add the Semeru Cloud Compiler into the
