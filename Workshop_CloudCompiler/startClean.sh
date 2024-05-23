@@ -1,9 +1,0 @@
-docker stop mongodb
-docker stop prometheus
-docker stop jitserver
-docker stop acmeair_jitserver
-docker stop acmeair_hm
-docker stop acmeair_baseline
-docker rm acmeair_jitserver
-docker rm acmeair_hm
-docker rm acmeair_baseline

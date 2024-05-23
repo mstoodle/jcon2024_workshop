@@ -8,7 +8,7 @@ FROM icr.io/appcafe/open-liberty:kernel-slim-java17-openj9-ubi
 ENV JAVA_HOME=/opt/java/openjdk
 ENV PATH="/opt/java/openjdk/bin:${PATH}"
 
-COPY --chown=1001:0 acmeair.LibertyFiles/server.xml /config/server.xml
+COPY --chown=1001:0 acmeair.LibertyFiles/server9090.xml /config/server.xml
 COPY --chown=1001:0 acmeair.LibertyFiles/mongo.properties /config/mongo.properties
 COPY --chown=1001:0 acmeair.LibertyFiles/acmeair-webapp-2.0.0-SNAPSHOT.war /config/apps
 ENV ACMEAIR_PROPERTIES=/config/mongo.properties
