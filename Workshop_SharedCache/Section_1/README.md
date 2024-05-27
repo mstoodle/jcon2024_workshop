@@ -27,34 +27,31 @@ to start:
 Look for the elapsed time to start the server. You'll see a line that ends with something like::
 	The defaultServer server started in 3.043 seconds.
 
-4. At this point the server is loaded and you should be able to access the application from your
-host web browser by loading "localhost:9080". Verify the server page loads.
-
-5. Go to another terminal window and log into the workshop container. Run the following command
+4. Go to another terminal window and log into the workshop container. Run the following command
 in another terminal window:
 
-	$ podman exec -it --network=host workshop/main /bin/bash
+	$ podman exec --privileged -it workshop-main /bin/bash
 
 This will connect to the running workshop container so that you can run another command there
 while the Liberty server is running.
 
-6. Use podman stats to observe the memory use of the container.
+5. Use podman stats to observe the memory use of the container.
 
-$ podman stats
+	$ podman stats
 
 This command shows various statistics about all containers running within the main workshop
 container. For example, you should see something like:
 
-ID            NAME               CPU %       MEM USAGE / LIMIT  MEM %       NET IO      BLOCK IO    PIDS        CPU TIME    AVG CPU %
-b814b591a1da  liberty_noscc  3.44%       131MB / 2.047GB    6.40%       0B / 0B     0B / 0B     60          9.040596s   33.61%
+	ID            NAME               CPU %       MEM USAGE / LIMIT  MEM %       NET IO      BLOCK IO    PIDS        CPU TIME    AVG CPU %
+	b814b591a1da  liberty_noscc      3.44%       131MB / 2.047GB    6.40%       0B / 0B     0B / 0B     60          9.040596s   33.61%
 
 which shows the Liberty server you started in step 3 running with 137MB of memory. You can leave
 this podman stats command running for step 7; it will update the list of active containers about
 every 5 seconds.
 
-7. Hit control-C to stop the server.
+6. Hit control-C to stop the server.
 
-8. Start and stop the server a few times to get a feeling for how the startup time and memory
+7. Start and stop the server a few times to get a feeling for how the startup time and memory
 consumption varies in different server instances.
 
 Repeat steps 3 and 7 a few times, noting the elapsed startup time in each run and checking the
@@ -63,7 +60,7 @@ memory usage figure in the other terminal window you started in step 6.
 You won't see exactly the same time and memory usage in different runs, but the server startup time
 usually falls within a few tenths of a second and the memory usage is typically within a few MB..
 
-9. Optionally, stop the podman stats command running in the other terminal window by hiting
+8. Optionally, stop the podman stats command running in the other terminal window by hiting
 control-C. You can also leave this command running for the other parts of this workshop so
 you can keep watching the statistics for the containers you use.
 

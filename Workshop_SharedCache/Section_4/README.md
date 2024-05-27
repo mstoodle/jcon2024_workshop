@@ -31,27 +31,22 @@ sample application. Run the following command and wait for the server to start:
 
 Just like in the previous section, this starts the server with 1 CPU core.
 
-4. At this point the server is loaded and you should be able to access the application from your
-host web browser by loading "localhost:8080/sample". Verify the server page loads.
-
-5. (Ignore steps 5 and 6 if you already have podman stats running in another terminal window)
+4. (Ignore step 4 if you already have podman stats running in another terminal window)
 Go to another terminal window and log into the workshop container. Run the following command
 in another terminal window:
 
-	$ podman exec -it --network=host workshop/main /bin/bash
+	$ podman exec --privileged -it workshop-main /bin/bash
 
 This will connect to the running workshop container so that you can run another command there
-while the tomcat server is running.
+while the tomcat server is running.  Use podman stats to observe the memory use of the container.
+	$ podman stats
 
-6. (Ignore steps 5 and 6 if you already have podman stats running in another terminal window)
-Use podman stats to observe the memory use of the container.
+5. Review the memory use for the server
 
-$ podman stats
-
-This command shows various statistics about all containers running within the main workshop
+The podman stats command shows various statistics about all containers running within the main workshop
 container. For example, you should see something like:
 
-	ID            NAME               CPU %       MEM USAGE / LIMIT  MEM %       NET IO      BLOCK IO    PIDS        CPU TIME    AVG CPU %
+	ID            NAME                CPU %      MEM USAGE / LIMIT  MEM %       NET IO      BLOCK IO    PIDS        CPU TIME    AVG CPU %
 	ef1846553ffb  tomcat_semeru.noscc 41.53%     41.73MB / 2.047GB  2.04%       0B / 0B     0B / 0B     35          2.011569s   41.53%
 
 which shows the Tomcat server you started in step 3 running with only 42MB of memory. Compared to
@@ -66,9 +61,7 @@ will continue to use less memory under load (although that has been the general 
 really test under load with the sample application, though, so you'll have to investigate this aspect
 further on your own if you're interested.
 
-You can leave the podman stats command running for step 7.
-
-7. Hit control-C to stop the server.
+6. Hit control-C to stop the server.
 
 Once you stop the server, you can run the startTime.awk script to find out how long it took to start
 the server. Let's see what that looks like:
@@ -80,7 +73,7 @@ the server. Let's see what that looks like:
 This message shows the server started in just under 2 seconds, which is really a LOT longer than
 with Temurin! Don't fear, however, this isn't the best Semeru Runtimes can do.
 
-8.  Before we improve on that time, however, first start and stop the server a few times and use the
+7.  Before we improve on that time, however, first start and stop the server a few times and use the
 startTime.awk script to see how reliable this start time is. You can also try running with 2 cores
 to see what that does:
 	$ podman run --cpus=2 --network=host --name=tomcat_semeru.noscc --replace -it tomcat_semeru.noscc > log.cpu2
@@ -90,7 +83,7 @@ With 2 cores, the podman stats are:
 	d6c64ea6596d  tomcat_semeru.noscc  0.22%       42.09MB / 2.047GB  2.06%       0B / 0B     0B / 0B     36          2.186217s   11.56%
 
 So not much change in memory usage, at least. How about the start time?
-	$./startTime.awk log.cpu2
+	$ ./startTime.awk log.cpu2
 	Server initiated 1715357245252879360, up at 1715357246401000000
 	Full start time is 1148.12 ms
 
@@ -98,11 +91,7 @@ Well, it improved dramatically, as you'd expect, and it's not as much behind Tem
 one core. But it's still very far behind. Don't give up yet! In the next section, Semeru Runtimes
 will improve dramatically!
 
-9. Optionally, stop the podman stats command running in the other terminal window by hiting
-control-C. You can also leave this command running for the other sections of this workshop so
-you can keep watching the statistics for the containers you use.
-
-9. You're done! 
+8. You're done! 
 
 This completes the fourth section in the workshop!
 

@@ -9,8 +9,9 @@ and run the all.build.sh script:
 	$ cd containers
 	$ ./all.build.sh
 
-This command builds all the various container images needed for this
-workshop that fall into these four categories :
+This command will take quite a while to run. It builds all the various
+container images needed for this workshop that fall into these four
+categories :
 	1. Mongodb
 	2. AcmeAir
 	3. JMeter

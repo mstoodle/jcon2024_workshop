@@ -38,22 +38,17 @@ sample application. Run the following command and wait for the server to start:
 
 As in earlier sections, we're initially confining the server to start with just 1 CPU core.
 
-4. At this point the server is loaded and you should be able to access the application from your
-host web browser by loading "localhost:8080/sample". Verify the server page loads correctly..
-
-5. (Ignore steps 5 and 6 if you already have podman stats running in another terminal window)
+4. (Ignore step 4 if you already have podman stats running in another terminal window)
 Go to another terminal window and log into the workshop container. Run the following command
 in another terminal window:
 
-	$ podman exec -it --network=host workshop/main /bin/bash
+	$ podman exec --privileged -it workshop-main /bin/bash
 
 This will connect to the running workshop container so that you can run another command there
-while the tomcat server is running.
+while the tomcat server is running. Use podman stats to observe the memory use of the container.
+	$ podman stats
 
-6. (Ignore steps 5 and 6 if you already have podman stats running in another terminal window)
-Use podman stats to observe the memory use of the container.
-
-$ podman stats
+5. Review the memory use of the server
 
 This command shows various statistics about all containers running within the main workshop
 container. For example, you should see something like:
@@ -66,9 +61,7 @@ we saw earlier in Section_4). That's not as dramatic an improvement as we saw wi
 server, but let's ignore that fact for now. With this new memory footprint baseline, the Temurin
 JDK with the HotSpot JVM consumes 75% more memory to start the server.
 
-You can leave the podman stats command running for step 7.
-
-7. Hit control-C to stop the server.
+6. Hit control-C to stop the server.
 
 Once you stop the server, we can check the start time using the startTime.awk script:
 
@@ -80,7 +73,7 @@ Wow, what is going on here? That's already much slower than starting with Temuri
 slower than using Semeru Runtime without their (in?)famous shared cache technology! What's
 going on here?
 
-8. Do a few runs to confirm your finding and that it's not just a fluke. You may see some
+7. Do a few runs to confirm your finding and that it's not just a fluke. You may see some
 variation because the times are much longer, but you should find the times are consistently
 large to a wildly unexpected degree.
 
@@ -90,38 +83,38 @@ Sidebar: ask yourself what you would do at this point if had gone through this e
 	up, assuming that Semeru Runtimes reputation for fast startup is probably exaggerated
 	or undeserved?
 
-9. I'm afraid you've been set up. Let's consider how the shared cache technology works. In order
-to have fast startup time, you need a cache to help you go faster. That means uou need to do one
+8. I'm afraid you've been set up. Let's consider how the shared cache technology works. In order
+to have fast startup time, you need a cache to help you go faster. That means you need to do one
 "cold" run to populate the cache with classes and compiled code. This "cold" run is expected to
 run more slowly because its purpose is to generate a high quality cache that will enable
-subsequent "warm" runs to start as quickly as possible. In fact, the OpenJ9 JVM employs
+subsequent "warm" runs to start as quickly as possible. In fact, the Eclipse OpenJ9 JVM employs
 very different compilation heuristics in this cold run compared to even a normal run that
-doesn't use the shared classes cache, and that's why the start time you saw in Step 8 was
+doesn't use the shared classes cache, and that's why the start time you saw in Step 6 was
 even longer than the times we measured in the previous section when we weren't using the
 shared classes cache.
 
-SO what happened in Step 1 is that all we did in the Dockerfile.tomcat_semeru.scc is to add the
+So what happened in Step 1 is that all we did in the Dockerfile.tomcat_semeru.scc is to add the
 -Xshareclasses option. There is no cache in the container so the starting point for every
-run we did in steps 3 and 8 is to populate a new cache that's just going to be thrown away
+run we did in steps 3 is to populate a new cache that's just going to be thrown away
 when the container stops (because by default results aren't persisted when a container runs) !
-Basically, we turned every run into a "cold" run that intentionally starts more slowly so
+Basically, we turned every run into a "cold" run that starts more slowly by design so
 that it builds a high quality cache.
 
-So how do we fix it? Rather than just turning on -Xshareclases, we need to actually start
-the server inside the build step to create a prepopulated cache. Once the cache is created
-in the build step, it will be present every time the container is run and every one of those
-runs will be a "warm" run that will start faster. To populate the cache with tomcat, we can
-start the server, sleep for a while until we're sure the server is started, then stop the
+How do we fix it? Rather than just turning on -Xshareclases when we run the server, we need to
+actually start the server inside the build step to create a prepopulated cache. Once the cache
+is created in the build step, it will be present every time the container is run and every one
+of those runs will be a "warm" run that will start faster. To populate the cache with tomcat, we can
+start the tomcat server, sleep for a while until we're sure the server is started, then stop the
 server. You can see this at the end of Dockerfile.tomcat_semeru.prepop_scc . Let's build that
 container now:
 
 	$ podman build --network=host -f Dockerfile.tomcat_semeru.prepop_scc -t tomcat_semeru.prepop_scc .
 
-If you pay attention, you'll see one more thing that's done at the very end of
+If you pay very close attention, you'll see one more thing that's done at the very end of
 Dockerfile.tomcat_semeru.prepop_scc : we added a "readonly" suboption to -Xshareclasses.
-Since nothing written into the cache in a "warm" run will be saved by the container, there
-is no point adding any other classes or compiled code after the build step. By updating
-the option to include "readonly" accesses to the cache do not need synchronization and
+Since nothing written into the cache in a "warm" run will be saved by the container anyway,
+there is no point adding any other classes or compiled code after the build step. By updating
+the option to include "readonly", all accesses to the cache do not need synchronization and
 all the code paths that focus on adding to the cache will be disabled. The end result will
 be faster startup!
 
@@ -130,11 +123,11 @@ Let's see how it works out by starting one of the new containers with the usual 
 
 There is a memory improvement because the shared cache is now being used:
 
-	ID            NAME               CPU %       MEM USAGE / LIMIT  MEM %       NET IO      BLOCK IO    PIDS        CPU TIME    AVG CPU %
-	3e4994b07276  tomcat_semeru.prepop_scc  0.84% 35.94MB / 2.047GB 1.76%       0B / 0B     8.192kB / 0B  35          719.773ms   5.87%
+	ID            NAME                      CPU %   MEM USAGE / LIMIT  MEM %       NET IO      BLOCK IO    PIDS        CPU TIME    AVG CPU %
+	3e4994b07276  tomcat_semeru.prepop_scc  0.84%   35.94MB / 2.047GB  1.76%       0B / 0B     8.192kB / 0B  35        719.773ms   5.87%
 
 And if we look at the start time:
-	./startTime.awk log.prepop.cpu1
+	$ ./startTime.awk log.prepop.cpu1
 	Server initiated 1715359356618435584, up at 1715359357211000000
 	Full start time is 592.564 ms
 
@@ -142,7 +135,7 @@ Now that's more like it! You can do the same runs with 2 cores:
 	$ podman run --cpus=2 --network=host --name=tomcat_semeru.prepop_scc --replace -it tomcat_semeru.prepop_scc > log.prepop.cpu2
 
 And see almost exactly the same memory usage:
-	ID            NAME               CPU %       MEM USAGE / LIMIT  MEM %       NET IO      BLOCK IO    PIDS        CPU TIME    AVG CPU %
+	ID            NAME                      CPU %       MEM USAGE / LIMIT  MEM %       NET IO      BLOCK IO    PIDS        CPU TIME    AVG CPU %
 	3adfe1f7ded9  tomcat_semeru.prepop_scc  0.97%       35.91MB / 2.047GB  1.75%       0B / 0B     0B / 0B     36          718.876ms   6.49%
 
 With even faster start time (under half a second!):
@@ -171,7 +164,7 @@ Semeru Prepop SCC	1 core		593ms		36MB
 
 Temurin			2 cores		633.684ms	73MB
 Semeru NOSCC		2 cores		1148.12ms	42MB
-Semeru SCC		2 cores		1624.24ms	39MB
+Semeru SCC		2 cores		1624.24ms	39MB	# bonus: collect this data point yourself!
 Semeru Prepop SCC	2 cores		448ms		36MB
 
 We hope you enjoyed this workshop and learned more about how startup time and memory usage

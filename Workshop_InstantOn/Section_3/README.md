@@ -14,7 +14,7 @@ a Dockerfile.liberty_beforeappstart file provided that builds the container and 
 starts the Liberty server before issuing the beforeAppStart checkpoint.
 Run the following command:
 
-	$ podman --runtime runc build \
+	$ podman build \
 	    --network=host \
 	    -f Dockerfile.liberty_beforeappstart \
 	    --no-cache \
@@ -25,19 +25,29 @@ Run the following command:
 	    --security-opt seccomp=unconfined \
 	    .
 
+Notice that the last step that runs in this build command is the checkpointing step. This
+command is added to the usual Dockerfile:
+	RUN checkpoint.sh beforeAppStart
+
+That's it! That's all you have to do to create a Liberty container that uses the InstantOn
+beforeAppStart checkpoint!
+
 3. Run the container. It will automatically start the OpenLiberty server by restoring the
 saved checkpoint and then completing the server startup (i.e. loading applications).
 Run the following command and wait for the server to start:
 
-	$ podman --runtime runc run \
+	$ podman run \
 	       --cpus=1 \
 	       --network=host \
 	       --cap-add=CHECKPOINT_RESTORE \
 	       --cap-add=SETPCAP \
-	       --security-opt seccomp=unconfined \
 	       --name=liberty_beforeappstart \
 	       --replace \
 	       liberty_beforeappstart
+
+Notice that restoring the process does *NOT* require the --security-opt seccomp=unconfined. This
+option is needed to prepare the checkpoint (which would normally happen in your CI system) but
+is not needed to start the server (which happens in your production system).
 
 Look for the elapsed time to start the server. You'll see a line that ends with something like::
 	The defaultServer server started in 0.517 seconds.
@@ -47,24 +57,18 @@ The beforeAppStart checkpoint enable Liberty to start in 18% of the time. Put an
 way, if you don't use the beforeAppStart checkpoint, the Liberty server will take
 approximately 5.6X longer to start! If you use Temurin, it will take 10.7X longer to start!
 
-4. At this point the server is loaded and you should be able to access the application from your
-host web browser by loading "localhost:9080". Verify the server page loads.
-
-5. (Ignore steps 5 and 6 if you already have podman stats running in another terminal window)
+4. (Ignore step 4 if you already have podman stats running in another terminal window)
 Go to another terminal window and log into the workshop container. Run the following command
 in another terminal window:
-
-	$ podman exec -it --network=host workshop/main /bin/bash
+	$ podman exec --privileged -it workshop-main /bin/bash
 
 This will connect to the running workshop container so that you can run another command there
-while the Liberty server is running.
+while the Liberty server is running. Run podman stats to observe the memory use of the container.
+	$ podman stats
 
-6. (Ignore steps 5 and 6 if you already have podman stats running in another terminal window)
-Use podman stats to observe the memory use of the container.
+5. Review the memory use of the server
 
-$ podman stats
-
-This command shows various statistics about all containers running within the main workshop
+The podman stats command shows various statistics about all containers running within the main workshop
 container. For example, you should see something like:
 
 	ID            NAME                    CPU %       MEM USAGE / LIMIT  MEM %       NET IO      BLOCK IO    PIDS        CPU TIME    AVG CPU %
@@ -73,27 +77,24 @@ container. For example, you should see something like:
 which shows the Liberty server you started in step 3 running with 99MB of memory or about the
 same memory as without using InstantOn.
 
-You can leave this podman stats command running for step 7.
+6. Hit control-C to stop the server.
 
-7. Hit control-C to stop the server.
-
-8. Start and stop the server a few times to get a feeling for how the startup time and memory
+7. Start and stop the server a few times to get a feeling for how the startup time and memory
 consumption varies in different server instances.
 
-Repeat steps 3 and 7 a few times, noting the elapsed startup time in each run and checking the
-memory usage figure in the other terminal window you started in step 6.
+Repeat steps 3 and 6 a few times, noting the elapsed startup time in each run and checking the
+memory usage figure in the other terminal window you started in step 4.
 
 You won't see exactly the same time and memory usage in different runs, but the server startup time
 usually falls within a few tenths of a second and the memory usage is typically within a few MB.
 
 You can also try runs with 2 cores to see what affect the additional CPU resources has.
 
-	$ podman --runtime runc run \
+	$ podman run \
 	       --cpus=2 \
 	       --network=host \
 	       --cap-add=CHECKPOINT_RESTORE \
 	       --cap-add=SETPCAP \
-	       --security-opt seccomp=unconfined \
 	       --name=liberty_beforeappstart \
 	       --replace \
 	       liberty_beforeappstart
@@ -102,7 +103,7 @@ This server starts in 0.425 seconds:
 	The defaultServer server started in 0.425 seconds.
 
 In terms of memory usage:
-	ID            NAME               CPU %       MEM USAGE / LIMIT  MEM %       NET IO      BLOCK IO    PIDS        CPU TIME    AVG CPU %
+	ID            NAME                   CPU %   MEM USAGE / LIMIT  MEM %       NET IO      BLOCK IO    PIDS        CPU TIME    AVG CPU %
 	a9882bbf3760  liberty_beforeappstart 4.42%   101.1MB / 2.047GB  4.94%       0B / 0B     0B / 0B     65          1.090813s   5.47%
 
 So 2 cores helped to start the server a little bit faster but maybe used a little bit more memory.
@@ -110,12 +111,11 @@ So 2 cores helped to start the server a little bit faster but maybe used a littl
 We can even try 4 cores and get a little more improvement but the return on investment isn't very
 high given we added 2 extra CPU cores:
 
-	$ podman --runtime runc run \
+	$ podman run \
 	       --cpus=4 \
 	       --network=host \
 	       --cap-add=CHECKPOINT_RESTORE \
 	       --cap-add=SETPCAP \
-	       --security-opt seccomp=unconfined \
 	       --name=liberty_beforeappstart \
 	       --replace \
 	       liberty_beforeappstart
@@ -128,11 +128,7 @@ f3753b7e1277  liberty_beforeappstart     2.59%       97.94MB / 2.047GB  4.78%   
 
 Memory usage seems a bit lower but this is probably just run-to-run variation.
 
-9. Optionally, stop the podman stats command running in the other terminal window by hiting
-control-C. You can also leave this command running for the other sections of this workshop so
-you can keep watching the statistics for the containers you use.
-
-9. You're done! 
+8. You're done! 
 
 Let's update our performance table:
 JDK			Cores		Start time	Memory usage

@@ -37,25 +37,21 @@ sample application. Run the following command:
 
 This starts tomcat using only a single CPU core and stores the output into the file log.cpu1.
 
-4. At this point the server is loaded and you should be able to access the application from your
-host web browser by loading "localhost:8080/sample". Verify the server page loads.
-
-5. (Ignore steps 5 and 6 if you already have podman stats running in another terminal window)
+4. (Ignore steps 4 if you already have podman stats running in another terminal window)
 Go to another terminal window and log into the workshop container. Run the following command
 in another terminal window:
 
-	$ podman exec -it --network=host workshop/main /bin/bash
+	$ podman exec --privileged -it workshop-main /bin/bash
 
 This will connect to the running workshop container so that you can run another command there
-while the tomcat server is running.
-
-6. (Ignore steps 5 and 6 if you already have podman stats running in another terminal window)
-Use podman stats to observe the memory use of the container.
+while the tomcat server is running.  Use podman stats to observe the memory use of the container:
 
 	$ podman stats
 
-This command shows various statistics about all containers running within the main workshop
-container. For example, you should see something like:
+5. Review the memory use of the server
+
+The podman stats command shows various statistics about all containers running within the main
+workshop container. For example, you should see something like:
 
 	ID            NAME               CPU %       MEM USAGE / LIMIT  MEM %       NET IO      BLOCK IO    PIDS        CPU TIME    AVG CPU %
 	671f11639e46  tomcat_temurin     0.32%       67.28MB / 2.047GB  3.29%       0B / 0B          0B / 0B     31          1.25609s    7.83%
@@ -64,9 +60,9 @@ which shows the Tomcat server you started in step 3 running with 67MB of memory.
 lightweight server but less capabilities are loaded here than into the Liberty server you started
 in Sections 1 and 2, which explains at least part of the different in memory usage.
 
-You can leave the podman stats command running for step 7.
+You can leave the podman stats command running for step 6.
 
-7. Hit control-C to stop the server.
+6. Hit control-C to stop the server.
 
 Press Control-C to stop the server. At this point, we can run the startupTime.awk script on the
 log to calculate the time it took from initiating the java command line from catalina.sh until
@@ -78,7 +74,7 @@ the server posted its "Server started" message.
 
 So the server started in roughly 1.15 seconds.
 
-8.  You can start the server a few more times, capturing the output to different log files so that
+7.  You can start the server a few more times, capturing the output to different log files so that
 you can get the start time for several runs, just to see the variation you experience. We aren't going
 to do a rigourous statistical analysis for this workshop but that would obviously be important if you
 were going to start measuring server start time for your production workloads.
@@ -87,18 +83,14 @@ You can also run with more cores just to see how the start time changes. For exa
 
 	$ podman run --cpus=2 --network=host --name=tomcat_temurin --replace -it tomcat_temurin > log.cpu2
 	<Hit Control-C after checking the memory consumption in the stats output>
-	$ ./startTime.awk log.cpu1
+	$ ./startTime.awk log.cpu2
 	Server initiated 1715356179088315648, up at 1715356179722000000
 	Full start time is 633.684 ms
 
 As you can see, adding a second core helps reduce the startup time to 633ms, but you may also find
 that the memory consumption increases a bit (perhaps to 73MB).
 
-9. Optionally, stop the podman stats command running in the other terminal window by hiting
-control-C. You can also leave this command running for the other sections of this workshop so
-you can keep watching the statistics for the containers you use.
-
-9. You're done! 
+8. You're done! 
 
 This completes the third section in the workshop!
 

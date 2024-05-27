@@ -28,28 +28,25 @@ Comparing to the Liberty server we started in Section_1, this server using the p
 shared classes cache starts in about 55% of the time (1.702 seconds versus 3.043 seconds),
 a dramatic improvement!
 
-4. At this point the server is loaded and you should be able to access the application from your
-host web browser by loading "localhost:9080". Verify the server page loads.
-
-5. (Ignore steps 5 and 6 if you already have podman stats running in another terminal window)
+4. (Ignore steps 5 and 6 if you already have podman stats running in another terminal window)
 Go to another terminal window and log into the workshop container. Run the following command
 in another terminal window:
 
-	$ podman exec -it --network=host workshop/main /bin/bash
+	$ podman exec --privileged -it workshop-main /bin/bash
 
 This will connect to the running workshop container so that you can run another command there
 while the Liberty server is running.
 
-6. (Ignore steps 5 and 6 if you already have podman stats running in another terminal window)
+5. (Ignore step 5 if you already have podman stats running in another terminal window)
 Use podman stats to observe the memory use of the container.
 
-$ podman stats
+	$ podman stats
 
-This command shows various statistics about all containers running within the main workshop
+6. This command shows various statistics about all containers running within the main workshop
 container. For example, you should see something like:
 
-ID            NAME               CPU %       MEM USAGE / LIMIT  MEM %       NET IO      BLOCK IO    PIDS        CPU TIME    AVG CPU %
-f6ecefd2dace  liberty_scc        3.51%       97.9MB / 2.047GB   4.78%       0B / 0B     0B / 0B     59          4.626379s   15.75%
+	ID            NAME               CPU %       MEM USAGE / LIMIT  MEM %       NET IO      BLOCK IO    PIDS        CPU TIME    AVG CPU %
+	f6ecefd2dace  liberty_scc        3.51%       97.9MB / 2.047GB   4.78%       0B / 0B     0B / 0B     59          4.626379s   15.75%
 
 which shows the Liberty server you started in step 3 running with 98MB of memory. The memory use
 is lower because the shared memory used by the shared cache can be shared by multiple instances
@@ -72,10 +69,6 @@ memory usage figure in the other terminal window you started in step 6.
 
 You won't see exactly the same time and memory usage in different runs, but the server startup time
 usually falls within a few tenths of a second and the memory usage is typically within a few MB.
-
-9. Optionally, stop the podman stats command running in the other terminal window by hiting
-control-C. You can also leave this command running for the other sections of this workshop so
-you can keep watching the statistics for the containers you use.
 
 9. You're done! 
 

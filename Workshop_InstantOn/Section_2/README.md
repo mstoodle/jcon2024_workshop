@@ -26,22 +26,17 @@ Look for the elapsed time to start the server. You'll see a line that ends with 
 Comparing to the Liberty server we started in Section_1 with the Temurin JDK, this server 
 starts in about 54% of the time (2.971 seconds versus 5.524 seconds): quite a dramatic improvement!
 
-4. At this point the server is loaded and you should be able to access the application from your
-host web browser by loading "localhost:9080". Verify the server page loads.
-
-5. (Ignore steps 5 and 6 if you already have podman stats running in another terminal window)
+4. (Ignore step 4 if you already have podman stats running in another terminal window)
 Go to another terminal window and log into the workshop container. Run the following command
 in another terminal window:
 
-	$ podman exec -it --network=host workshop/main /bin/bash
+	$ podman exec --privileged -it workshop-main /bin/bash
 
 This will connect to the running workshop container so that you can run another command there
-while the Liberty server is running.
+while the Liberty server is running.  Run podman stats to observe the memory use of the container.
+	$ podman stats
 
-6. (Ignore steps 5 and 6 if you already have podman stats running in another terminal window)
-Use podman stats to observe the memory use of the container.
-
-$ podman stats
+5. Review the memory use of the server
 
 This command shows various statistics about all containers running within the main workshop
 container. For example, you should see something like:
@@ -55,13 +50,13 @@ half of the 197MB of memory used by Temurin to start in this single core configu
 
 You can leave this podman stats command running for step 7.
 
-7. Hit control-C to stop the server.
+6. Hit control-C to stop the server.
 
-8. Start and stop the server a few times to get a feeling for how the startup time and memory
+7. Start and stop the server a few times to get a feeling for how the startup time and memory
 consumption varies in different server instances.
 
-Repeat steps 3 and 7 a few times, noting the elapsed startup time in each run and checking the
-memory usage figure in the other terminal window you started in step 6.
+Repeat steps 3 and 6 a few times, noting the elapsed startup time in each run and checking the
+memory usage figure in the other terminal window you started in step 4.
 
 You won't see exactly the same time and memory usage in different runs, but the server startup time
 usually falls within a few tenths of a second and the memory usage is typically within a few MB.
@@ -87,18 +82,14 @@ high given we added 2 extra CPU cores:
 
 	The defaultServer server started in 1.718 seconds.
 
-
+And memory use:
 	ID            NAME               CPU %       MEM USAGE / LIMIT  MEM %       NET IO      BLOCK IO    PIDS        CPU TIME    AVG CPU %
-	8af9f3867d37  liberty_scc  2.82%       96.71MB / 2.047GB  4.72%       0B / 0B     0B / 0B     56          3.994648s   25.13%
+	8af9f3867d37  liberty_scc        2.82%       96.71MB / 2.047GB  4.72%       0B / 0B     0B / 0B     56          3.994648s   25.13%
 
 Memory usage might have gone up another 1MB, but again, more runs would be needed to confirm that is
 not just run-to-run variation.
 
-9. Optionally, stop the podman stats command running in the other terminal window by hiting
-control-C. You can also leave this command running for the other sections of this workshop so
-you can keep watching the statistics for the containers you use.
-
-9. You're done! 
+8. You're done! 
 
 Let's update our performance table:
 JDK			Cores		Start time	Memory usage

@@ -31,8 +31,10 @@ sleep 1
 startMongo
 if [[ $? -eq 0 ]]; then
   podman build -m=1024m --network=$NET_NAME -f $DOCKERFILE_9090 -t $ACMEAIR_CONTAINER_NAME_9090 .
-  podman build -m=1024m --network=$NET_NAME -f $DOCKERFILE_9091 -t $ACMEAIR_CONTAINER_NAME_9091 .
-  podman build -m=1024m --network=$NET_NAME -f $DOCKERFILE_9092 -t $ACMEAIR_CONTAINER_NAME_9092 .
+  # Uncomment to create a second AcmeAir server listening on port 9091
+  #podman build -m=1024m --network=$NET_NAME -f $DOCKERFILE_9091 -t $ACMEAIR_CONTAINER_NAME_9091 .
+  # Uncomment to create a third AcmeAir server listening on port 9092
+  #podman build -m=1024m --network=$NET_NAME -f $DOCKERFILE_9092 -t $ACMEAIR_CONTAINER_NAME_9092 .
   stopMongo
 else
   echo "liberty-acmeair containers not created"

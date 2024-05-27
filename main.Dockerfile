@@ -2,12 +2,6 @@ FROM icr.io/appcafe/ibm-semeru-runtimes:open-17-jdk-ubi AS semeru
 
 FROM docker.io/redhat/ubi9
 
-EXPOSE 3000
-EXPOSE 9080
-EXPOSE 9090
-EXPOSE 9092
-EXPOSE 9093
-
 RUN yum update -y \
  && yum install -y podman runc git procps net-tools maven vim man unzip \
  && yum -y clean all && rm -fr /var/cache

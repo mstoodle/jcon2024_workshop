@@ -21,27 +21,31 @@ and running the all.build.sh script.
 1. Create your windows
 You will need the mongo, acmeair, and jmeter containers, and you will
 need three terminal windows that are both running inside the workshop-main
-container. You can use the main one as is, but so you'll need two more.
+container. You can use the main one as is, but so you'll need two more
+(only one more if you already have a window running podman stats)..
 For each new terminal window you need, run the following command:
 
-	$ podman exec --privileged -it workshop-main /bin/bash
+[HOST]		$ podman exec --privileged -it workshop-main /bin/bash
 
 This will start a new shell process inside the workshop-main container.
 From there, change to the directory containing these instructions:
-$ cd /Workshop_CloudCompiler/Section_1. You should now have three
-terminal windows, let's call them Window1, Window2, and Window3.
-You'll find two directories under Section_1 called Window1 and
-Window2 (we'll cover Window3 in a moment). In one window, change to
-the Window1 directory (and we'll now refer to this as "Window1"). In
-one of the others, change to the Window2 directory (and we'll now
-call this one "Window2"). Predictably, we'll call the remaining
-window "Window3".
+
+[each window]	$ cd /Workshop_CloudCompiler/Section_1
+
+You should now have three terminal windows, let's call them Window1,
+Window2, and Window3.  You'll find two directories under Section_1
+called Window1 and Window2 (we'll cover Window3 in a moment). In one
+window, change to the Window1 directory (and we'll now refer to this
+as "Window1"). In one of the others, change to the Window2 directory
+(and we'll now call this one "Window2"). Predictably, we'll call the
+remaining window "Window3".
 
 2. Start podman stats in Window3
 
 In Window3, you will only run one command to monitor the containers
 started in this workshop. Run the command:
-	$ podman stats
+
+[Window3]	$ podman stats
 
 You may want to make this window wide but it probably only needs
 a few lines because we won't be running a lot of containers at the
@@ -51,6 +55,7 @@ same time.
 
 Switching focus to Window1, you will first start the mongo container
 by running
+
 [Window1]	$ ./step1_start.mongo.sh
 
 This command ensure the mongo database container is running and
@@ -63,7 +68,7 @@ to accept load. Unlike the other containers we've started in the workshops,
 we will not be running this container as a daemon so its output will
 come out in the window (and there will be a lot of it!).
 
-[Window1]	$ ./step2_start.acmeair.sh
+[Window1]	$ ./step2_start.acmeair400.sh
 
 This starts a container called acmeair_baseline_400m with, you guessed it
 a container memory limit of 400MB and one CPU core. It doesn't start the server
@@ -110,6 +115,17 @@ single CPU core, so it takes a while to ramp up and also the
 transactions have to share that single core and the memory with
 all the CPU and memory demands of the JIT compiler.
 
+Remember what throughput level the server ramped up to in
+this run. For example, my macbook pro managed to achieve
+about 5100 - 5200 responses per second after about one
+minute :
+	summary +  31667 in 00:00:06 = 5277.0/s Avg:     0 Min:     0 Max:    47 Err:     0 (0.00%) Active: 4 Started: 4 Finished: 0
+	summary = 154350 in 00:01:00 = 2557.9/s Avg:     1 Min:     0 Max:   562 Err:     0 (0.00%)
+
+This run the throughput reached about 5200 - 5300 responses per second
+after about a minute and had provided a total of 154,350 responses in
+the first minute.
+
 5. Stop the containers
 
 When you have gotten your fill of watching the activity of
@@ -120,7 +136,7 @@ it doesn't, you can run this command to eventually stop it:
 
 [Window1]	$ podman stop jmeter
 
-6. Let's try that again...
+6. Let's try that again with less memory
 
 In the previous experiment, the container memory limit we
 used for AcmeAir was 400MB, and that is a comfortable enough
@@ -141,29 +157,32 @@ earlier server, and it will use about the same amount
 of memory after starting.
 
 Now we're going to try to apply load against this server,
-just like we did before in Window2:
+just like we did before in Window2 using the same script
+from step 3:
 
-[Window2]	$ ./step5_start.jmeter.sh
+[Window2]	$ ./step3_start.jmeter.sh
 
-Here you should observe a very big difference. Not only
-will the server ramp up much more slowly than before,
-you may even see the server crash because all the 
-memory available to the container is consumed and we
-haven't configured any swap space.
+Here you should observe a very big difference compared
+to the run that used a 400mb limit. Not only will the server
+ramp up much more slowly than before, you may even see the
+server crash because all the memory available to the container
+is consumed and we haven't configured any swap space.
 
 If the server doesn't crash, you should see that the
-overall performance is lower and it takes longer to
-get to the peak performance. In fact, you may see the
+overall performance is much lower and it takes longer to
+get to the lower peak performance. In fact, you may see the
 performance drop markedly as the JIT compiler workload
 dominates the ability of the server to process
 transactions.
 
 Whenever you want to stop, you can hit Control-C in Window1
 and that should stop both the AcmeAir server as well as the
-jmeter container.
+jmeter container.  You may find the server is so stuck,
+however,that you'll have to use a separate window to kill
+the container:
+	$ podman kill acmeair_baseline_225m
 
-You can stop the mongo container too at this point, if you
-would like:
+You should also stop the mongo container too at this point:
 
 	$ podman stop mongodb
 
