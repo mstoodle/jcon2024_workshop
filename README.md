@@ -41,9 +41,10 @@ using the following command (or just run ./main.build.sh) :
 It may take a while to build on your computer, but once this container is built
 you should have everything you need to go through the workshop.
 
-Although it's not recommended as common practice, this workshop runs as
-root so that its containers within the main workshop container work without
-issues. You can simply run the following command:
+Although it's not recommended as common practice, this workshop may run more
+smoothly for you if you invoke it as root. The safest way to do that is by
+running a command like this one so that you can't accidentally leave a terminal
+window on your host with root permission lying around:
 	$ sudo ./main.run.sh
 
 You can peek inside that script to see that it just runs the following command:
