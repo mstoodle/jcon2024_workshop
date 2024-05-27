@@ -1,24 +1,25 @@
 This repo contains the materials first prepared for JCON Europe 2024.
 
 The workshop abstract is:
-Java with Ultra Fast Startup and Remote JIT Compilation
 
-Java starting too slowly for you? Amazed that your program has to JIT compile
-the same old methods every time you run it, consuming memory and CPU cycles
-that you’ve got to pay for? It doesn’t have to be that way! With Eclipse OpenJ9
-built into the Semeru Runtimes JDK, you can start your Linux-based Java servers
-and then save them to disk. When you need another instance, don’t start it from
-scratch! Simply restore it from disk to avoid almost all that startup work to get
-your server handling requests in just a couple hundred milliseconds! And that
-powerful JIT compiler can be easily configured to run as a remote service so that
-your applications aren’t disrupted by those extra CPU cycles and memory use. In
-this workshop, we’ll teach you a bit more about these amazing technologies and
-then let you try them out yourselves with some simple Liberty-based servers running
-on the OpenShift Container Platform. You’ll see firsthand why these technologies
-are being used in production today to provide incredibly elastic and cost-effective
-servers for Java workloads. You know you’re curious! Bring your questions and an
-open mind and let us show you how you too can overcome Java’s traditional overheads
-without restricting the use of any Java language features!
+	Java with Ultra Fast Startup and Remote JIT Compilation
+
+	Java starting too slowly for you? Amazed that your program has to JIT compile
+	the same old methods every time you run it, consuming memory and CPU cycles
+	that you’ve got to pay for? It doesn’t have to be that way! With Eclipse OpenJ9
+	built into the Semeru Runtimes JDK, you can start your Linux-based Java servers
+	and then save them to disk. When you need another instance, don’t start it from
+	scratch! Simply restore it from disk to avoid almost all that startup work to get
+	your server handling requests in just a couple hundred milliseconds! And that
+	powerful JIT compiler can be easily configured to run as a remote service so that
+	your applications aren’t disrupted by those extra CPU cycles and memory use. In
+	this workshop, we’ll teach you a bit more about these amazing technologies and
+	then let you try them out yourselves with some simple Liberty-based servers running
+	on the OpenShift Container Platform. You’ll see firsthand why these technologies
+	are being used in production today to provide incredibly elastic and cost-effective
+	servers for Java workloads. You know you’re curious! Bring your questions and an
+	open mind and let us show you how you too can overcome Java’s traditional overheads
+	without restricting the use of any Java language features!
 
 
 Unfortunately, due to a scheduling mishap, OpenShift Container Platform resources
