@@ -13,7 +13,8 @@ application workload.
 Before you follow the steps below, be sure that you have created the
 containers that are to be used by going to the
 /Workshop_CloudCompiler/containers directory and running the
-all.build.sh script there.
+all.build.sh script there. If you did that as part of performing
+Section_1 of this workshop, you do not have to repeat this step.
 
 1. Create four windows in the workshop-main container
 
@@ -142,6 +143,13 @@ You should also see some CPU activity in Window4 for the jitserver
 container as it starts compiling methods needed to load and
 initialize the OpenLiberty and the AcmeAir application.
 
+Finally, notice that the AcmeAir server started a bit faster
+than before:
+	The defaultServer server started in 2.503 seconds.
+
+The 20%-25% faster startup is because offloading the JIT compiler
+workload to the server enabled the server to get going that much faster.
+
 6. Stop the jitserver (!)
 
 We're going to demonstrate the resilience of the
@@ -242,12 +250,11 @@ so). On my machine, it looked something like this:
 
 The data points that followed showed similar level of throughput (5118.5
 responses per second) but the overall number of reponses processed in the
-first minute increased substantially (from about 150,000 to 250,000
-representing a 67% increase in the number of response provided in the first
-minute!). Ramping up more quickly means more responsive servers and better
-customer experiences.
+first minute increased substantially (from about 154K to 249K) representing
+a 67% increase in the number of response provided in the first minute!).
+Ramping up more quickly means more responsive servers and happier customers.
 
-Once you're happy you've seen the peak throughput, hit Control-C
+Once you're satisfied you've seen the peak throughput, hit Control-C
 in both Window2 (AcmeAir), which should also stop the jmeter step
 running in Window3. Once AcmeAir stops, you should see a message in
 Window1, something like:
@@ -263,7 +270,7 @@ let's see if we can run AcmeAir with less memory. Back in Window2,
 there is a last script to try (step6_start.acmeair200.sh), but
 let's take a look at what's changed from step3:
 
-	$ diff step3_start.acmeair.sh step6_start.acmeair200.sh
+	$ diff step3_start.acmeair400.sh step6_start.acmeair200.sh
 	< podman run --replace --network=host -e JVM_ARGS="$ACMEAIR_OPTS"   -m=400m --cpus=1 -v $PWD/mongo.properties:/config/mongo.properties --name acmeair_jitserver_400mb $ACMEAIR_IMAGE
 	---
 	> podman run --replace --network=host -e JVM_ARGS="$ACMEAIR_OPTS"   -m=200m --cpus=1 -v $PWD/mongo.properties:/config/mongo.properties --name acmeair_jitserver_200mb $ACMEAIR_IMAGE

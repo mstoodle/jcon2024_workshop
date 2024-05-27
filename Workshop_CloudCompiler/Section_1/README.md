@@ -170,10 +170,7 @@ is consumed and we haven't configured any swap space.
 
 If the server doesn't crash, you should see that the
 overall performance is much lower and it takes longer to
-get to the lower peak performance. In fact, you may see the
-performance drop markedly as the JIT compiler workload
-dominates the ability of the server to process
-transactions.
+get to the lower peak performance.
 
 Whenever you want to stop, you can hit Control-C in Window1
 and that should stop both the AcmeAir server as well as the
