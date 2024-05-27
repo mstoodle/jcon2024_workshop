@@ -33,29 +33,21 @@ segments (WorkshopSharedCache, WorkshopInstantOn, and WorkshopCloudCompiler)
 that take attendees through a sequence of experiments that showcase how these
 technologies can be used to accelerate startup and reduce memory usage.
 
-Although not recommended as common practice, this workshop needs to run as
-root so that its containers within containers can work without issues. If
-you are not running as the root user on your system, you'll want to switch
-to it before proceeding with the workshop:
-	sudo /bin/bash
-Please be careful in the rest of this workshop because you will be running
-as root with super powers.
-
-If you're running on Windows, then the "podman stats" command may  not work
-for you. I don't know if it affects all Windows versions, but I was unable
-to get it to work on Windows 10.
-
 To create the main workshop container, you will need to build the main container
-using the following command:
+using the following command (or just run ./main.build.sh) :
 
-$ podman build --network=host -f main.Dockerfile -t workshop/main .
+	$ podman build --network=host -f main.Dockerfile -t workshop/main .
 
 It may take a while to build on your computer, but once this container is built
 you should have everything you need to go through the workshop.
 
-Start the container and do all your work inside that container:
+Although it's not recommended as common practice, this workshop runs as
+root so that its containers within the main workshop container work without
+issues. You can simply run the following command:
+	$ sudo ./main.run.sh
 
-$ podman run --network=host --privileged --cgroup-manager=cgroupfs --name=workshop-main --replace -it workshop/main /bin/bash
+You can peek inside that script to see that it just runs the following command:
+	$ podman run --network=host --privileged --name=workshop-main --replace -it workshop/main /bin/bash
 
 Once you have the container up and running, the usual progression is to start with
 $ cd /Workshop_SharedCache
