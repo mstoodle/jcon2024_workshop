@@ -68,21 +68,27 @@ $ cat README.md
 
 When done with the SharedCache workshop, you can cd back up to the root to move to
 the InstantOn workshop:
-$ cd /Workshop_InstantOn/Section_1
+$ cd /Workshop_InstantOn
+$ cat README.md
+$ cd Section_1
 $ cat README.md
 ...
 
 When you finish the InstantOn workshop, you can cd back up to the root to move to
 the CloudCompiler workshop:
-$ cd /Workshop_CloudCompiler/Section_1
+$ cd /Workshop_CloudCompiler
+$ cat README.md
+# cd Section_1
 $ cat README.md
 ...
 
 That's it! Good luck!
 
-When you're done, if you logged in as root you'll want to logout before you move on
-to other things! Or just close the terminal window you've been working in.
+When you're done, just close all the terminal windows you've been working in and
+the main container will stop.
 
+
+# Containers
 
 NOTE: all the documentation for this workshop assumes you are using "podman" to
 run your containers. If you use docker, just replace "podman" with "docker" and
@@ -91,7 +97,7 @@ the commands should otherwise work.
 If you need help installing podman onto your computer, here are a couple of reference
 links to help:
 
-MacOS:
+## MacOS:
 Just follow the installation instructions here:
 https://www.redhat.com/sysadmin/run-containers-mac-podman
 
@@ -103,14 +109,14 @@ results described in the README.mds.
 Make sure you initialize and start the podman machine before trying to run the above
 command to start the workshop/main container.
 
-Windows:
+## Windows:
 First install the Windows Subsystem for Linux (WSL):
-https://learn.microsoft.com/en-us/windows/wsl/install
+https://www.windowscentral.com/how-install-wsl2-windows-10
 
-When you get to the "Change the default Linux distribution installed" section on that page,
-I suggest you choose either a UBI9 or a very recent Ubuntu (22.04 or later).
+When you choose a Linux distribution to run, I suggest you choose either a UBI9 or
+a recent Ubuntu (22.04 or later).
 
-Linux
+## Linux
 There is probably a "podman" package available via your standard package manager (yum, apt, etc.)
 Google "install podman <package manager name>" or your distribution name and you should find
 useful links to get podman installed.
