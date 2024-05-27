@@ -19,8 +19,4 @@ Each section contains a README.md file that describe the steps to take in
 that section, explains the commands you'll be using, and discusses the
 results you'll measure.
 
-These instruction all assume you are using 'podman', but if you're using
-Docker just replace every use of 'podman' with 'docker' and everything
-should otherwise just work.
-
 We hope you enjoy going through this workshop!
